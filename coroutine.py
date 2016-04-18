@@ -1,6 +1,12 @@
 # -*- coding: UTF-8 -*-
-import gevent
+# http://xlambda.com/gevent-tutorial/
+import gevent.monkey
 
+gevent.monkey.patch_socket()
+import gevent
+import requests
+import time
+from multiprocessing.dummy import Pool as ThreadPool
 
 # # todo
 # # change crawler to coroutine
@@ -27,17 +33,59 @@ import gevent
 # c = consumer()
 # producer(c)
 
-def f1():
-    print 'f1 running ...'
-    gevent.sleep(0)
-    print 'switch to f1 ...'
+# # simple usage
+# def f1():
+#     print 'f1 running ...'
+#     gevent.sleep(0)
+#     print 'switch to f1 ...'
+#
+#
+# def f2():
+#     print 'f2 running ...'
+#     gevent.sleep(0)
+#     print 'switch to f2 ...'
+# gevent.joinall([
+#     gevent.spawn(f1),
+#     gevent.spawn(f2)
+# ])
 
 
-def f2():
-    print 'f2 running ...'
-    gevent.sleep(0)
-    print 'switch to f2 ...'
-gevent.joinall([
-    gevent.spawn(f1),
-    gevent.spawn(f2)
-])
+start = time.time()
+during = lambda: time.time() - start
+
+
+def fetch(n):
+    s = time.time()
+    requests.get('http://www.baidu.com')
+    print 'process %d : %1.2fs -- %1.2fs' % (n, time.time() - s, during())
+
+
+def synchronous():
+    for x in xrange(10):
+        fetch(x)
+
+
+def thread():
+    pool = ThreadPool(10)
+    for x in xrange(100):
+        pool.apply_async(fetch, args=(x,))
+    pool.close()
+    pool.join()
+
+
+def asynchronous():
+    gevent.joinall([gevent.spawn(fetch, x) for x in xrange(100)])
+
+
+# start = time.time()
+# print 'synchronous'
+# synchronous()
+# print 'during %1.2f ' % during()
+start = time.time()
+print 'thread'
+thread()
+print 'during %1.2f ' % during()
+start = time.time()
+print 'asynchronous'
+asynchronous()
+print 'during %1.2f ' % during()
