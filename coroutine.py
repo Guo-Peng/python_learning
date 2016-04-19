@@ -10,6 +10,7 @@ from multiprocessing.dummy import Pool as ThreadPool
 
 # # todo
 # # change crawler to coroutine
+# # pool usage
 # def consumer():
 #     n = 0
 #     while True:
@@ -89,22 +90,22 @@ from multiprocessing.dummy import Pool as ThreadPool
 # print 'asynchronous'
 # asynchronous()
 # print 'during %1.2f ' % during()
-
-from gevent.pool import Pool
-
-start = time.time()
-during = lambda: time.time() - start
-
-
-def fetch(n):
-    s = time.time()
-    time.sleep(n/10.0)
-    print 'process %d : %1.2fs -- %s' % (n, time.time() - s, during())
-
-
-pool = Pool(5)
-pool.map(fetch, xrange(10))
-# 是否需要等待结束
-pool.join()
-print 'test'
-print during()
+#
+# from gevent.pool import Pool
+#
+# start = time.time()
+# during = lambda: time.time() - start
+#
+#
+# def fetch(n):
+#     s = time.time()
+#     time.sleep(n/10.0)
+#     print 'process %d : %1.2fs -- %s' % (n, time.time() - s, during())
+#
+#
+# pool = Pool(5)
+# pool.map(fetch, xrange(10))
+# # 是否需要等待结束
+# pool.join()
+# print 'test'
+# print during()
