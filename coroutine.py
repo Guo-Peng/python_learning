@@ -98,13 +98,13 @@ during = lambda: time.time() - start
 
 def fetch(n):
     s = time.time()
-    requests.get('http://www.baidu.com')
+    time.sleep(n/10.0)
     print 'process %d : %1.2fs -- %s' % (n, time.time() - s, during())
 
 
 pool = Pool(5)
 pool.map(fetch, xrange(10))
 # 是否需要等待结束
-# pool.join()
+pool.join()
 print 'test'
 print during()
